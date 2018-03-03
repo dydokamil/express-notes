@@ -21,6 +21,7 @@ app.get('/', function (req, res) {
     )
     .end()
 })
+
 app.post('/', function (req, res) {
   // Yes, this should be a secure time comparison! But it's a demo. Don't do this in your app.
   if (req.cookies.sessionID === app.locals.sessionID) {

@@ -9,11 +9,34 @@ var index = require('./routes/index')
 var users = require('./routes/users')
 var notes = require('./routes/notes')
 
+var mongoose = require('mongoose')
+const dbUrl = require('./config')
+const passport = require('passport')
+const User = require('./models/user')
+
 var app = express()
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'jade')
+// passport setup
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.get('/success', (req, res) => {
+  res.send('Welcome ' + req.query.username)
+})
+app.get('/error', (req, res) => {
+  res.send('Error logging in.')
+})
+
+passport.serializeUser((user, cb) => cb(null, user.id))
+passport.deserializeUser((id, cb) =>
+  User.findById(id, (err, user) => cb(err, user))
+)
+
+// mongo setup
+mongoose.connect(dbUrl)
+mongoose.Promise = global.Promise
+var db = mongoose.connection
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
