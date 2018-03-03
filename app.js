@@ -14,7 +14,17 @@ const dbUrl = require('./config')
 const passport = require('passport')
 const User = require('./models/user')
 
+var cors = require('cors')
+
 var app = express()
+
+// set up CORS
+var corsOptions = {
+  origin: 'http://localhost:3001',
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
 
 // passport setup
 app.use(passport.initialize())

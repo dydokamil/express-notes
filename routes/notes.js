@@ -1,10 +1,12 @@
+var moment = require('moment')
+
 const Note = require('../models/note')
 
 var express = require('express')
 var router = express.Router()
 
 router.get('/', function (req, res, next) {
-  Note.find({}, 'name', (err, notes) => {
+  Note.find({}, 'name edited', (err, notes) => {
     if (err) {
       res.status(400).json({ message: err })
       return next(err)
@@ -38,6 +40,25 @@ router.get('/:id', (req, res, next) => {
       return next(err)
     }
     res.json(note)
+  })
+})
+
+router.put('/:id', (req, res, next) => {
+  Note.findByIdAndUpdate(
+    req.params.id,
+    { ...req.body, edited: moment() },
+    { new: true },
+    (err, note) => {
+      if (err) return res.status(400).json(err)
+      return res.json(note)
+    }
+  )
+})
+
+router.delete('/:id', (req, res, next) => {
+  Note.findByIdAndRemove(req.params.id, (err, note) => {
+    if (err) return res.status(400).json(err)
+    return res.status(204).json({ message: 'Delete OK' })
   })
 })
 
